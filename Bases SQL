@@ -1,0 +1,252 @@
+DDL =  Lenguaje De Definicion De Datos
+        -CREATE
+        -DROP
+        ALTER
+
+
+DML = Lenguage De Manipulacion De Datos
+        -INSERT
+        -UPDATE
+        -DELETE
+        -SELECT
+              =
+              AND
+              OR
+              >
+              <
+              <=
+              >=
+              <>      Diferente
+              !=      Diferente
+              BETWEEN___AND____
+              LIKE
+              IN
+          -ORDENAMIENTO
+              ORDER BY
+              ASC
+              DESC
+          -AGREGACION
+              COUNT
+              SUM
+              MAX
+              MIN
+              AVG
+          -AGRUPACION
+              GROUP BY
+          -UNIONES
+              INNER JOIN
+              LEFT JOIN
+              RIGHT JOIN
+
+
+//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**
+
+        CREATE:
+                CREATE DATABASE peterstevens;
+
+                CREATE USER JuanPa @localhost IDENTIFIED BY '1234'
+                  ////juanPa @localhost PW 1234  to PhpMyAdmin
+
+                CREATE TABLE productos (
+                		id_producto INT NOT NULL AUTO_INCREMENT,
+                    	PRIMARY KEY (id_producto),
+                    	nombre VARCHAR (100),
+                    	precio INT
+                );
+
+                CREATE TABLE clientes (
+                    	id_cliente INT NOT NULL AUTO_INCREMENT,
+                    	PRIMARY KEY (id_cliente),
+                    	nombre VARCHAR (100),
+                    	apellido VARCHAR (100),
+                    	edad INT,
+                    	telefono INT
+                );
+
+                CREATE TABLE pedidos (
+                		id_pedido INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                    	PRIMARY KEY (id_pedido),
+                    	fecha DATE,
+                    	cantidad INT,
+                    	id_cliente INT,
+                    	id_producto INT,
+                    	FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+                    	FOREIGN KEY (id_producto) REFERENCES productos (id_producto) "// ADICIONAL:" ON DELETE CASCADE "// OR" ON UPDATE CASCADE
+                )
+
+
+
+          DESCRIBE:
+                  DESCRIBE nombreTabla;
+
+          DROP:
+                        // Borrar BD
+                DROP DATABASE nombredb;
+
+                        // Borrar Tabla
+                DROP TABLE nombreTabla;
+
+                        // Borrar Columna
+                ALTER TABLE nombreTabla DROP COLUMN nombreColumna;
+
+          ALTER:
+                        // Renonbrar Tabla
+                ALTER TABLE nombreTabla RENAME newNombreTabla
+
+                        // Cambiar nombre de columna
+                ALTER TABLE nombreTabla CHANGE nombreColumna newNombreColumna INT(11)
+
+                        // Adicionar Columna
+                ALTER TABLE nombreTabla ADD COLUMN (newNombreColumna TIPODATO (20))
+
+                       // Borrar Columna
+                ALTER TABLE nombreTabla DROP COLUMN nombreColumna
+
+                       // Modificar restricciones en un campo especifico
+                ALTER TABLE tbl_users MODIFY id_user INT UNSIGNED AUTO_INCREMENT
+
+                       // Añadir restricciona a Columna
+                ALTER TABLE tbl_nom ADD CONSTRAINT nom_clave UNIQUE (nom_colum)
+
+////////////////////////////////////////
+
+
+          INSERT:
+
+                INSERT INTO nombreTabla (id, nomColumna, nomColumna) VALUES ('1', 'Juan', 'Ayala');
+                INSERT INTO pedidos (fecha, cantidad, id_cliente, id_producto) VALUES ('2019-05-10','2','1','2');
+
+
+          UPDATE:
+
+              UPDATE clientes SET telefono = '87686788' WHERE id_cliente = '1'
+              UPDATE nombreTabla SET nombreColumna = 'newdato' WHERE id_cliente ='id de la fila que quiero cambiar'
+              UPDATE clientes SET telefono='1234567' WHERE id_cliente BETWEEN 20 AND 27
+              UPDATE ages SET name= 'Aysha', age = '17'  WHERE name = 'Juan'   //CAMBIA LOS DATOS DE UNA CAMPO
+              UPDATE Artist SET name = 'Bob Marley' WHERE artist_id = '3'
+
+          DELETE:
+
+              DELETE FROM clientes WHERE id_cliente = 14;
+              DELETE FROM nombreTabla WHERE nomColumna = datoA_Borrar
+
+          LOAD:
+
+              LOAD DATA INFILE 'C:/Users/PC/Documents/NomApeEdadTel.csv'   //Cargó el archivo correctamente en otros ejemplos a
+              INTO TABLE clientes                                          //la linea tiene agragado el LOCAL así:  LOAD DATA LOCAL INFILE 'C:/Users/PC/Documents/NomApeEdadTel.csv'
+              FIELDS TERMINATED BY ';'
+              LINES TERMINATED BY '\n'
+              (nombre, apellido, edad, telefono);
+
+
+          EXPORT:
+              SELECT nombre, apellido, edad, telefono
+              FROM clientes
+              INTO OUTFILE 'C:/Users/PC/Documents/ImportadoDesdeSql.csv'
+              FIELDS TERMINATED BY ';'
+              LINES TERMINATED BY '\n\r'
+
+
+          SELECT:
+
+             SELECT * FROM clientes
+               WHERE (id_cliente BETWEEN 20 AND 30) AND ( telefono = 1234567) AND (edad < 30)
+
+             SELECT * FROM clientes  WHERE nombre LIKE 'a%'    //nombre que empiezan con letra a
+             SELECT * FROM clientes  WHERE nombre LIKE '%s'    //nombre que terminan con letra s
+
+             SELECT * FROM clientes  WHERE id_cliente IN (1,3,5,7);
+
+             SELECT RAND() AS 'OPERACION' FROM usuarios;     // seleccionar numeros aleatorios con un alias especifico (AS 'OPERACION') en la tabla usuarios
+             SELECT FLOOR(RAND()*(10-5+1)+5); // Numero aleatorio con una cifra decimal
+
+             SELECT e.id, e.titulo, u.nombre AS 'AUTOR', c.nombre AS 'CATEGORIA' FROM entradas e, usuarios u, categorias c WHERE e.usuarios_id = u.id AND e.categorias_id = c.id;
+
+              //********************FUNCIONES PARA TEXTOS******************//
+                SELECT UPPER(nombre) FROM usuarios;     *********Pasar a mayusculas
+                SELECT LOWER(nombre) FROM usuarios;     *********Pasar a minusculas
+                SELECT UPPER(CONCAT(nombre, '' , apellidos)) AS 'aliasColumna' FROM usuarios;   ********Pasar a mayusculas y concatenar campos
+                SELECT LENGTH(CONCAT(nombre, '' , apellidos)) AS 'aliasColumna' FROM usuarios;  ********Sacar la longitud de los campos concatenados
+                SELECT CONCAT('    ', nombre, '' , apellidos, '     ') AS 'aliasColumna' FROM usuarios;    *********Concatenar y agragar espacios a lado y lado del resultado
+                SELECT TRIM(CONCAT('    ', nombre, '' , apellidos, '     ')) AS 'aliasColumna' FROM usuarios;   ********Eliminar los espacios en blanco del resultado de la concatenacion
+
+                //********************FUNCIONES PARA FECHAS******************//
+                SELECT fecha, HOUR (fecha) AS 'fecha_actual' FROM usuarios;
+                SELECT fecha, YEAR (fecha) AS 'fecha_actual' FROM usuarios;
+                SELECT fecha, DAY (fecha) AS 'fecha_actual' FROM usuarios;
+                SELECT fecha, MONTH (fecha) AS 'fecha_actual' FROM usuarios;
+                SELECT fecha, DAYOFYEAR (fecha) AS 'fecha_actual' FROM usuarios;
+                SELECT fecha, DAYOFMONTH (fecha) AS 'fecha_actual' FROM usuarios;
+                SELECT fecha, DAYOFWEEK (fecha) AS 'fecha_actual' FROM usuarios;
+                SELECT fecha, DAYOFYEAR (fecha) AS 'fecha_actual' FROM usuarios;
+                SELECT email, CURTIME() AS 'hora_actual' FROM usuarios;
+                SELECT email, SYSDATE() AS 'hora_del_sistema' FROM usuarios;
+                SELECT email, DATE_FORMAT(fecha, '%d,%m,%Y') AS 'HoraFormatoEUROPEO' FROM usuarios;
+
+                //*********************FUNCIONES GENERALES*********************//
+                SELECT email, ISNULL(apellidos) FROM usuarios;
+                SELECT email, STRCMP('hola' , 'hola') FROM usuarios;  // Verificar si un dato es igual al otro
+                SELECT email, STRCMP('hola' , 'kok') FROM usuarios;   // Verificar si un dato es igual al otro
+                SELECT VERSION() FROM usuarios;               // Verificar version de sql
+                SELECT USER() FROM usuarios;                  // Verificar usuario de sql (resultado por registro)
+                SELECT DISTINCT USER() FROM usuarios;         // Verificar usuario de sql (no muestra repetiods)
+                SELECT IFNULL(apellidos, 'ESTE CAMPO ESTÁ VACIO') FROM usuarios;   //valida si hay algún campo vacio y muestra string
+
+
+          COUNT:
+              SELECT COUNT(*) AS nombre FROM clientes WHERE nombre = 'juan'   //Contar
+
+          SUM:
+              SELECT SUM(edad) AS edad FROM clientes WHERE nombre= 'juan'
+              SELECT id, email, (id+7) AS 'OPERACION' FROM usuarios        // Operacion con campos numericos de tablas
+
+          MAX:
+              SELECT MAX(edad) AS edad, nombre FROM clientes
+          MIN:
+              SELECT MIN(edad) AS edad, nombre FROM clientes
+              SELECT MIN(edad) AS edad, nombre, apellido, telefono FROM clientes
+
+          AVG:                                                              //AVERAGE//PROMEDIO
+              SELECT AVG(edad) AS edad FROM clientes
+
+          GROUP BY:
+              SELECT nombre, COUNT(*) FROM clientes GROUP BY nombre
+
+          INNER JOIN:
+              SELECT * FROM clientes INNER JOIN pedidos ON clientes.id_cliente = pedidos.id_cliente  //UNION DE TABLA A con tabla B muestra la union de las dos
+              SELECT nombre, id_producto FROM clientes INNER JOIN pedidos ON clientes.id_cliente = pedidos.id_cliente
+              SELECT nombre,cantidad FROM clientes INNER JOIN pedidos ON clientes.id_cliente = pedidos.id_cliente WHERE cantidad >10
+              SELECT * FROM clientes LEFT JOIN pedidos ON clientes.id_cliente= pedidos.id_pedido   //predomina la tabla de la isquierda
+              SELECT * FROM clientes RIGHT JOIN pedidos ON clientes.id_cliente= pedidos.id_pedido  //predomina la tabla de la derecha
+              SELECT * FROM productos RIGHT JOIN pedidos ON productos.id_producto= pedidos.id_pedido
+
+          SHOW:
+              SHOW GLOBAL VARIABLES LIKE 'local_infile'
+
+
+
+
+
+          SHA1:
+              SELECT sha1(CONCAT(name,age)) AS X FROM Ages ORDER BY age
+
+
+
+////////////////////////////////////////////// COMANDOS DESDE LA VENTANA DE COMANDOS DEL MYSQL ///////////////////////////
+    ** INGRESAR A MARIADB MONITOR **
+                    mysql --user=root
+
+    ** MOSTRAR BASES DE DATOS EN EL SISTEMA mysql **
+                    SHOW DATABASES;
+
+    ** USAR UNA BASE DE DATOS **
+                    USE name_bd
+
+    ** MOSTRAR TABLAS DE LA BD **
+                    SHOW TABLES;
+
+    ** MOSTRAR LA DESCRIPCION TABLA ESPECIFICA **
+                    DESC nom_table;
+
+    ** MOSTRAR TABLA **
+                    SELECT * FROM nom_table;

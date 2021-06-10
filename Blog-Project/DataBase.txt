@@ -1,0 +1,35 @@
+CREATE DATABASE IF NOT EXISTS blog ;
+USE blog;
+
+CREATE TABLE IF NOT EXISTS usuarios (
+	id INT(10) NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL,
+    apellidos VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    password VARCHAR(100) NOT NULL, 
+    fecha DATE NOT NULL,
+    CONSTRAINT pk_usuarios PRIMARY KEY(id),
+    CONSTRAINT uq_email UNIQUE(email)
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS categorias(
+	id INT(10) NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(50),
+    CONSTRAINT pk_categorias PRIMARY KEY(id)
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS entradas(
+ 	id INT(10) NOT NULL AUTO_INCREMENT,
+	usuario_id INT(10),
+    categoria_id INT(10),
+    titulo VARCHAR(50),
+    descripcion MEDIUMTEXT,
+    fecha DATE,
+    CONSTRAINT pk_entradas PRIMARY KEY(id),
+    CONSTRAINT fk_usuarios FOREIGN KEY(usuario_id) REFERENCES usuarios(id),
+    CONSTRAINT fk_categorias FOREIGN KEY(categoria_id) REFERENCES categorias(id)
+)ENGINE=INNODB;
+
+INSERT INTO usuarios VALUES(NULL, 'Juan', 'Ayala Sanchez', 'pabloayala08@hotmail.com', 'asdf', CURDATE());
+INSERT INTO usuarios VALUES(NULL, 'Pedro', 'Mejia', 'Pedro@hotmail.com', 'jklp', CURDATE());
+INSERT INTO usuarios VALUES(NULL, 'Johan', 'SantaOlalla', 'johan@hotmail.com', 'dfgh', CURDATE());
